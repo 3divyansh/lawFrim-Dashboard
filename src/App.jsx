@@ -1,31 +1,39 @@
-import React from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Layout from './Component/Layout/Layout.jsx'
-import Home from './Pages/Home/Home.jsx'
-import Blog from "./Pages/Blog/Blog.jsx"
+import React, { useState } from 'react';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import Layout from './Component/Layout/Layout.jsx';
+import Home from './Pages/Home/Home.jsx';
+import Blog from './Pages/Blog/Blog.jsx';
+import AdminLogin from './Pages/Admin/AdminLogin.jsx';
 
+const App = () => {
+const [isAuthenticated, setIsAuthenticated] = useState(
+  localStorage.getItem('isAuthenticated') === 'true'
+);
 
+const handleLoginSuccess = () => {
+  setIsAuthenticated(true);
+  localStorage.setItem('isAuthenticated', 'true');
+};
 
+  const PrivateRoute = ({ children }) => {
+    return isAuthenticated ? children : <Navigate to="/admin-login" />;
+  };
 
-  const App = () => {
-    return (
-      <>
-        <BrowserRouter>
-        <Routes >
-      <Route exact  path='/' element={<Layout/>} >
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/admin-login" element={<AdminLogin onLoginSuccess={handleLoginSuccess} />} />
 
-      <Route exact path='/' element={<Home/>} />
+        <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
+          <Route index element={<Home />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="*" element={<p>Page Not Found</p>} />
+        </Route>
 
-  <Route path='/blog' element={<Blog />} />
-      <Route  path='*' element={<p>not found</p>}/>
-      
-      </Route>
+        <Route path="*" element={<p>Page Not Found</p>} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
-      <Route path='*' element={<p>not found</p>}/>
-        </Routes>
-        </BrowserRouter>      
-      </>
-    )
-  }
-
-  export default App
+export default App;

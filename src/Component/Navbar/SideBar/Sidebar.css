@@ -1,8 +1,11 @@
 
 .sidebarlogo>img{
-    width: 50px;
-    height: 30x;
+    width: 80px;
+    height: 50x;
+    align-items: center;
 }
+
+
 .sidebarlogo svg{
     font-size: 40px;
     cursor: pointer;
