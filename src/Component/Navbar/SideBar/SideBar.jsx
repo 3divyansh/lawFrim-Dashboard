@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { RiDashboardFill } from "react-icons/ri";
 import { IoLogOutOutline, IoArrowBackOutline } from "react-icons/io5";
 import { BsPerson } from "react-icons/bs";
+import { ImBlog } from "react-icons/im";
 import "./Sidebar.css";
 
 const SideBar = ({ collapsed, handleSidebaratmobile }) => {
@@ -12,8 +13,8 @@ const SideBar = ({ collapsed, handleSidebaratmobile }) => {
 
 
   const handleMenuItemClick = (page) => {
-    setActivePage(page);  // Set the active page
-    handleSidebaratmobile(); // Close the sidebar on mobile
+    setActivePage(page);  
+    handleSidebaratmobile(); 
   };
 
   return (
@@ -52,10 +53,11 @@ const SideBar = ({ collapsed, handleSidebaratmobile }) => {
           onClick={() => handleMenuItemClick('Comment')}
         >
           <MenuItem className="itemscontent">
-            <span><BsPerson className="ms-2 me-5" /></span>
+            <span><ImBlog  className="ms-2 me-5" /></span>
             <span>Blog</span>
           </MenuItem>
         </Link>  
+
       </Menu>
 
       {/* Logout Button */}

@@ -6,61 +6,38 @@ const Blog = () => {
     {
       id: 1,
       title: "Getting Started with Physiotherapy",
-      slug: "getting-started-physiotherapy",
-      excerpt: "Learn the basics of physiotherapy and how it can help improve your quality of life.",
-      content: "Physiotherapy is a healthcare profession that helps people restore, maintain and maximize their strength, function, movement and overall well-being.",
+      content: "Physiotherapy is a healthcare profession that helps people restore, maintain and maximize their strength, function, movement and overall well-being. It focuses on improving quality of life through hands-on care, patient education, and prescribed movement.",
       featuredImage: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400",
       status: "published",
-      createdAt: "2024-01-15",
-      tags: ["physiotherapy", "health", "wellness"]
+      createdAt: "2024-01-15"
     },
     {
       id: 2,
       title: "Benefits of Regular Exercise",
-      slug: "benefits-regular-exercise",
-      excerpt: "Discover how regular exercise can transform your physical and mental health.",
-      content: "Regular exercise is one of the most important things you can do for your health.",
+      content: "Regular exercise is one of the most important things you can do for your health. It helps improve cardiovascular health, strengthens muscles and bones, and boosts mental well-being. Exercise also helps maintain a healthy weight and reduces the risk of chronic diseases.",
       featuredImage: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",
       status: "draft",
-      createdAt: "2024-01-10",
-      tags: ["exercise", "fitness", "health"]
+      createdAt: "2024-01-10"
     }
   ]);
 
-  const [showEditor, setShowEditor] = useState(false);
+  const [currentView, setCurrentView] = useState('list');
   const [editingBlog, setEditingBlog] = useState(null);
-  const [currentView, setCurrentView] = useState('list'); // 'list' or 'editor'
   const contentRef = useRef(null);
 
   const [formData, setFormData] = useState({
     title: '',
-    slug: '',
-    excerpt: '',
     content: '',
     featuredImage: '',
-    status: 'draft',
-    tags: '',
-    metaTitle: '',
-    metaDescription: '',
-    h1: '',
-    h2: '',
-    introduction: ''
+    status: 'draft'
   });
 
   const resetForm = () => {
     setFormData({
       title: '',
-      slug: '',
-      excerpt: '',
       content: '',
       featuredImage: '',
-      status: 'draft',
-      tags: '',
-      metaTitle: '',
-      metaDescription: '',
-      h1: '',
-      h2: '',
-      introduction: ''
+      status: 'draft'
     });
   };
 
@@ -72,8 +49,10 @@ const Blog = () => {
 
   const handleEdit = (blog) => {
     setFormData({
-      ...blog,
-      tags: blog.tags ? blog.tags.join(', ') : ''
+      title: blog.title,
+      content: blog.content,
+      featuredImage: blog.featuredImage || '',
+      status: blog.status
     });
     setEditingBlog(blog);
     setCurrentView('editor');
@@ -82,10 +61,8 @@ const Blog = () => {
   const handleSave = () => {
     const blogData = {
       ...formData,
-      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       id: editingBlog ? editingBlog.id : Date.now(),
-      createdAt: editingBlog ? editingBlog.createdAt : new Date().toISOString().split('T')[0],
-      slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      createdAt: editingBlog ? editingBlog.createdAt : new Date().toISOString().split('T')[0]
     };
 
     if (editingBlog) {
@@ -168,39 +145,6 @@ const Blog = () => {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">H1 Heading</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={formData.h1}
-                  onChange={(e) => setFormData({ ...formData, h1: e.target.value })}
-                  placeholder="Main H1 heading for SEO"
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">H2 Subheading</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={formData.h2}
-                  onChange={(e) => setFormData({ ...formData, h2: e.target.value })}
-                  placeholder="H2 subheading"
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Introduction</label>
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  value={formData.introduction}
-                  onChange={(e) => setFormData({ ...formData, introduction: e.target.value })}
-                  placeholder="Brief introduction to the blog post"
-                />
-              </div>
-
-              <div className="mb-3">
                 <label className="form-label">Featured Image URL</label>
                 <input
                   type="url"
@@ -222,7 +166,7 @@ const Blog = () => {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Content</label>
+                <label className="form-label">Blog Content</label>
                 <div className="editor-toolbar mb-2">
                   <div className="btn-group me-2">
                     <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => formatText('bold')}>
@@ -262,36 +206,31 @@ const Blog = () => {
                       H3
                     </button>
                   </div>
-                  <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => formatText('formatBlock', 'blockquote')}>
-                    <Quote size={14} />
-                  </button>
+                  <div className="btn-group me-2">
+                    <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => formatText('formatBlock', 'p')}>
+                      P
+                    </button>
+                    <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => formatText('formatBlock', 'blockquote')}>
+                      <Quote size={14} />
+                    </button>
+                  </div>
                 </div>
                 <div
                   ref={contentRef}
                   className="form-control"
                   contentEditable
-                  style={{minHeight: '300px', padding: '12px'}}
+                  style={{minHeight: '400px', padding: '12px'}}
                   onInput={handleContentChange}
                   dangerouslySetInnerHTML={{__html: formData.content}}
                 />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Excerpt</label>
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  value={formData.excerpt}
-                  onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                  placeholder="Brief description of the blog post"
-                />
+                <small className="text-muted">Write your blog content here. You can format text, add images, and create paragraphs.</small>
               </div>
             </div>
           </div>
         </div>
 
         <div className="col-lg-4">
-          <div className="card mb-4">
+          <div className="card">
             <div className="card-header">
               <h5 className="card-title mb-0">Publishing Options</h5>
             </div>
@@ -306,57 +245,6 @@ const Blog = () => {
                   <option value="draft">Draft</option>
                   <option value="published">Published</option>
                 </select>
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">URL Slug</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  placeholder="blog-url-slug"
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Tags (comma separated)</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={formData.tags}
-                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                  placeholder="tag1, tag2, tag3"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-header">
-              <h5 className="card-title mb-0">SEO Settings</h5>
-            </div>
-            <div className="card-body">
-              <div className="mb-3">
-                <label className="form-label">Meta Title</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={formData.metaTitle}
-                  onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
-                  placeholder="SEO title"
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Meta Description</label>
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  value={formData.metaDescription}
-                  onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
-                  placeholder="SEO description"
-                />
               </div>
             </div>
           </div>
@@ -386,9 +274,9 @@ const Blog = () => {
                 <tr>
                   <th>Image</th>
                   <th>Title</th>
+                  <th>Content Preview</th>
                   <th>Status</th>
                   <th>Date</th>
-                  <th>Tags</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -407,8 +295,14 @@ const Blog = () => {
                     </td>
                     <td>
                       <div className="blog-info">
-                        <h6 className="mb-1">{blog.title}</h6>
-                        <p className="text-muted mb-0 small">{blog.excerpt}</p>
+                        <h6 className="mb-0">{blog.title}</h6>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="content-preview">
+                        <p className="text-muted mb-0 small" style={{maxWidth: '200px'}}>
+                          {blog.content.replace(/<[^>]*>/g, '').substring(0, 100)}...
+                        </p>
                       </div>
                     </td>
                     <td>
@@ -418,15 +312,6 @@ const Blog = () => {
                     </td>
                     <td>
                       <small className="text-muted">{blog.createdAt}</small>
-                    </td>
-                    <td>
-                      <div className="blog-tags">
-                        {blog.tags?.map((tag, index) => (
-                          <span key={index} className="badge bg-light text-dark me-1 mb-1">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
                     </td>
                     <td>
                       <div className="action-buttons">
@@ -525,8 +410,8 @@ const Blog = () => {
           font-size: 14px;
         }
         
-        .blog-tags .badge {
-          font-size: 11px;
+        .content-preview {
+          max-width: 200px;
         }
         
         .action-buttons .btn {
@@ -541,6 +426,11 @@ const Blog = () => {
         
         td {
           font-size: 13px;
+        }
+        
+        [contentEditable]:focus {
+          outline: none;
+          border-color: #dc3545;
         }
         
         @media (max-width: 768px) {
@@ -571,10 +461,6 @@ const Blog = () => {
           
           .blog-info h6 {
             font-size: 12px;
-          }
-          
-          .blog-tags .badge {
-            font-size: 10px;
           }
         }
         
