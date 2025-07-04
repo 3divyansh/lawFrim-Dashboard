@@ -1,0 +1,15 @@
+
+.dashboard.heading{
+    font-size: 13px;
+}
+.dashboard.heading p span{
+    font-weight: 500;
+    color: var(--theme-color-red);
+}
+.gotoicon{
+    color: var(--theme-color-red);
+    padding: 5px;
+    border-radius: 50%;
+    background-color: var(--themecolor-white);
+}
+

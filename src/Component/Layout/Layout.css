@@ -1,0 +1,58 @@
+/* width */
+::-webkit-scrollbar {
+  width: 5px; 
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 20px;
+}
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+  background: var(--theme-color-red);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-color-red);
+}
+
+.rightsection{
+    width: 100%;
+    overflow-x: hidden;
+}
+.navbarframe{
+  height:11.8vh;
+}
+.layoutchilden::-webkit-scrollbar{
+    display: none;
+}
+.layoutsection{
+    background-color: var(--themecolor-gray);
+}
+.sidesection{
+    height: 100vh;
+}
+.sidebar{
+    height: 100%;
+}
+.layoutchildren{
+    height: 88.2vh;
+    overflow-y: scroll;
+}
+
+@media  (max-width:500px){
+  .apexcharts-text tspan{
+    font-size: 10px!important;
+  }
+  .sidesection{
+    position: absolute;
+    z-index: 1;
+    right: 100%;
+  }
+  .sidesection.onlick{
+    left: 0%!important;
+    transition:2s
+ 
+    }
+}

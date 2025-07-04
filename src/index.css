@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+:root {
+  --theme-color-red: #eb1c24;
+  --themefont: "Raleway", sans-serif;
+  --themecolor-white: #ffffff;
+  --themecolor-gray: #eeeeee;
+  --themecolor-black: #000000;
+  --theme-color-veg: #178138;
+  --theme-color-nonveg: #bc0612;
+  --theme-color-vegan: #008000;
+  --theme-color-blue: #275df5;
+  --theme-color-text-gray:#717b9e;
+  --theme-color--gray:#474D6A;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Raleway, sans-serif;
+}
+.theme-btn {
+  cursor: pointer !important;
+  padding: 6px 16px;
+  font-size: 20px;
+  background: var(--theme-color-red)!important;
+  border-color: var(--theme-color-red)!important;
+  border-radius: 0.5rem;
+  color: var(--themecolor-white) !important;
+}
+.roundcard{
+  border-radius:20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--themecolor-white);
+}
+
+a {
+  display: inline-block;
+  text-decoration: none!important;
+  color: inherit!important;
+  cursor: pointer;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  outline: none !important;
+  list-style: none;
+}
+
+
+.theme-btn:hover {
+  background: var(--theme-color-red) !important;
+  border-color: var(--theme-color-red) !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cuisine-pills.cuisine-pills {
+  width: fit-content;
+  margin-right: 5px;
+  border-radius: 40px;
+  padding: 5px 15px;
+  margin-bottom: 10px;
+}
+
+.pdding_for_section{
+  padding: 20px;
+}
+
+.inner_element_padding{
+  padding: 10px;
+}
+
+.margin_for_section{
+  margin: 25px;
+}
+
+.inner_element_margin{
+  margin: 10px;
+}
+
+.margin-bottom_section{
+  margin-bottom: 20px;
+}
+.margin-bottom_inner{
+  margin-bottom: 10px;
+}
+
