@@ -181,7 +181,49 @@ const Blog = () => {
 
   const handleContentChange = () => {
     if (contentRef.current) {
+      // Save cursor position
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(contentRef.current);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      const caretOffset = preCaretRange.toString().length;
+      
+      // Update content
       setFormData({ ...formData, content: contentRef.current.innerHTML });
+      
+      // Restore cursor position
+      setTimeout(() => {
+        if (contentRef.current) {
+          const textNodes = [];
+          const walker = document.createTreeWalker(
+            contentRef.current,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+          );
+          let node;
+          while (node = walker.nextNode()) {
+            textNodes.push(node);
+          }
+          
+          let currentOffset = 0;
+          for (let i = 0; i < textNodes.length; i++) {
+            const textNode = textNodes[i];
+            const textLength = textNode.textContent.length;
+            if (currentOffset + textLength >= caretOffset) {
+              const range = document.createRange();
+              const selection = window.getSelection();
+              range.setStart(textNode, caretOffset - currentOffset);
+              range.collapse(true);
+              selection.removeAllRanges();
+              selection.addRange(range);
+              break;
+            }
+            currentOffset += textLength;
+          }
+        }
+      }, 0);
     }
   };
 
@@ -332,6 +374,7 @@ const Blog = () => {
                   contentEditable
                   style={{minHeight: '400px', padding: '12px'}}
                   onInput={handleContentChange}
+                  suppressContentEditableWarning={true}
                   dangerouslySetInnerHTML={{__html: formData.content}}
                 />
                 <small className="text-muted">Write your blog content here. You can format text, add images from URL or upload files, and create paragraphs.</small>
