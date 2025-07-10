@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ChevronRight, Image, Bold, Italic, Underline, List, Link, Quote, Eye, Edit, Trash2, Plus, Save, X } from 'lucide-react';
+import { ChevronRight, Image, Bold, Italic, Underline, List, Link, Quote, Eye, Edit, Trash2, Plus, Save, X, Upload } from 'lucide-react';
 
 const Blog = () => {
   const [blogs, setBlogs] = useState([
@@ -23,7 +23,9 @@ const Blog = () => {
 
   const [currentView, setCurrentView] = useState('list');
   const [editingBlog, setEditingBlog] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState({});
   const contentRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -82,6 +84,46 @@ const Blog = () => {
     }
   };
 
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Check if file is an image
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size should be less than 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageDataUrl = e.target.result;
+        const imageId = Date.now().toString();
+        
+        // Store the uploaded image
+        setUploadedImages(prev => ({
+          ...prev,
+          [imageId]: imageDataUrl
+        }));
+        
+        // Set as featured image
+        setFormData(prev => ({
+          ...prev,
+          featuredImage: imageDataUrl
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
   const formatText = (command, value = null) => {
     document.execCommand(command, false, value);
     contentRef.current.focus();
@@ -92,6 +134,42 @@ const Blog = () => {
     if (url) {
       formatText('insertImage', url);
     }
+  };
+
+  const insertUploadedImage = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        if (!file.type.startsWith('image/')) {
+          alert('Please select an image file');
+          return;
+        }
+        
+        if (file.size > 5 * 1024 * 1024) {
+          alert('File size should be less than 5MB');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const imageDataUrl = e.target.result;
+          const imageId = Date.now().toString();
+          
+          setUploadedImages(prev => ({
+            ...prev,
+            [imageId]: imageDataUrl
+          }));
+          
+          // Insert image into content
+          formatText('insertImage', imageDataUrl);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
   };
 
   const insertLink = () => {
@@ -145,24 +223,54 @@ const Blog = () => {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Featured Image URL</label>
-                <input
-                  type="url"
-                  className="form-control"
-                  value={formData.featuredImage}
-                  onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                />
-                {formData.featuredImage && (
-                  <div className="mt-2">
-                    <img 
-                      src={formData.featuredImage} 
-                      alt="Featured" 
-                      className="img-thumbnail"
-                      style={{maxWidth: '200px', maxHeight: '150px'}}
+                <label className="form-label">Featured Image</label>
+                <div className="image-upload-section">
+                  <div className="d-flex gap-2 mb-2">
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm"
+                      onClick={handleImageUploadClick}
+                    >
+                      <Upload className="me-2" size={14} />
+                      Upload Image
+                    </button>
+                    <span className="text-muted small">or</span>
+                    <input
+                      type="url"
+                      className="form-control form-control-sm"
+                      value={formData.featuredImage.startsWith('data:') ? '' : formData.featuredImage}
+                      onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
+                      placeholder="Enter image URL"
                     />
                   </div>
-                )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    style={{ display: 'none' }}
+                  />
+                  {formData.featuredImage && (
+                    <div className="mt-2">
+                      <img 
+                        src={formData.featuredImage} 
+                        alt="Featured" 
+                        className="img-thumbnail"
+                        style={{maxWidth: '200px', maxHeight: '150px'}}
+                      />
+                      <div className="mt-1">
+                        <button
+                          type="button"
+                          className="btn btn-outline-danger btn-sm"
+                          onClick={() => setFormData({ ...formData, featuredImage: '' })}
+                        >
+                          <X size={12} className="me-1" />
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="mb-3">
@@ -194,6 +302,9 @@ const Blog = () => {
                     <button type="button" className="btn btn-outline-secondary btn-sm" onClick={insertImage}>
                       <Image size={14} />
                     </button>
+                    <button type="button" className="btn btn-outline-secondary btn-sm" onClick={insertUploadedImage}>
+                      <Upload size={14} />
+                    </button>
                   </div>
                   <div className="btn-group me-2">
                     <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => formatText('formatBlock', 'h1')}>
@@ -223,7 +334,7 @@ const Blog = () => {
                   onInput={handleContentChange}
                   dangerouslySetInnerHTML={{__html: formData.content}}
                 />
-                <small className="text-muted">Write your blog content here. You can format text, add images, and create paragraphs.</small>
+                <small className="text-muted">Write your blog content here. You can format text, add images from URL or upload files, and create paragraphs.</small>
               </div>
             </div>
           </div>
@@ -416,6 +527,17 @@ const Blog = () => {
         
         .action-buttons .btn {
           padding: 4px 8px;
+        }
+        
+        .image-upload-section {
+          border: 1px dashed #dee2e6;
+          border-radius: 4px;
+          padding: 12px;
+          background-color: #f8f9fa;
+        }
+        
+        .image-upload-section:hover {
+          border-color: #dc3545;
         }
         
         th {
